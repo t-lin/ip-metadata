@@ -4,7 +4,7 @@ def make_dir(dir_path):
     try:
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
-    except Exception, e:
+    except Exception as e:
         raise e
 
 class DefaultConfig(object):
