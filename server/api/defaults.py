@@ -16,6 +16,10 @@ etcd = etcd3.client()
 apiKey = "KEY HERE"
 ipHandler = ipinfo.getHandler(apiKey)
 
+# Global values/functions
+RespHeaders = { 'content-type': 'application/json; charset=UTF-8',
+                'Access-Control-Allow-Origin': '*'} # Allow CORS
+
 class IPMetadata(Resource):
     def get(self, ip):
         # Validate IP address
@@ -46,7 +50,7 @@ class IPMetadata(Resource):
             # etcd returns byte array, convert to utf-8 string
             ipMeta = ipMeta.decode('utf-8')
 
-        return make_response(ipMeta)
+        return make_response(ipMeta, RespHeaders)
 
     def storeMetadata(self, ip, ipMeta):
         assert type(ipMeta) is dict
@@ -56,8 +60,7 @@ class IPMetadata(Resource):
         # Transform back into string and store into etcd
         etcd.put(ip, ujson.dumps(ipMeta))
 
-        retMsg = "You called PUT w/ key %s!" % ip
-        return make_response(retMsg)
+        return
 
 
 class AllIPMetadata(Resource):
@@ -88,7 +91,7 @@ class AllIPMetadata(Resource):
 
             retList.append(tmpDict)
 
-        return make_response(str(retList))
+        return make_response(str(retList), RespHeaders)
 
 rest_api.add_resource(IPMetadata, '/<string:ip>')
 rest_api.add_resource(AllIPMetadata, '/all')
