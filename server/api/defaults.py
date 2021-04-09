@@ -59,5 +59,37 @@ class IPMetadata(Resource):
         retMsg = "You called PUT w/ key %s!" % ip
         return make_response(retMsg)
 
+
+class AllIPMetadata(Resource):
+    def get(self):
+        retList = []
+        allMeta = [res[0].decode('utf-8') for res in etcd.get_all()]
+        for i in range(len(allMeta)):
+            # Check if it's a dict
+            try:
+                ipMeta = ujson.loads(allMeta[i])
+            except Exception as err:
+                print("ERROR: The following is not properly formatted JSON:\n%s" % allMeta[i])
+                continue
+
+            # Extract relevant fields to create output expected by WorldMap
+            try:
+                loc = ipMeta['loc'].split(',')
+                tmpDict = { 'key': ipMeta['ip'],
+                            'name': ipMeta['ip'],
+                            'latitude': float(loc[0]),
+                            'longitude': float(loc[1])  }
+            except KeyError as err:
+                print("ERROR: %s; ensure entry was obtained from ipinfo:\n%s" % (err, allMeta[i]))
+                continue
+            except Exception as err:
+                print("ERROR: Unknown exception:\n%s" % err)
+                continue
+
+            retList.append(tmpDict)
+
+        return make_response(str(retList))
+
 rest_api.add_resource(IPMetadata, '/<string:ip>')
+rest_api.add_resource(AllIPMetadata, '/all')
 
