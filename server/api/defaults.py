@@ -91,7 +91,8 @@ class AllIPMetadata(Resource):
 
             retList.append(tmpDict)
 
-        return make_response(str(retList), RespHeaders)
+        # Use ujson to convert to string to ensure compatibility w/ JSON's double-quotes
+        return make_response(ujson.dumps(retList), RespHeaders)
 
 rest_api.add_resource(IPMetadata, '/<string:ip>')
 rest_api.add_resource(AllIPMetadata, '/all')
