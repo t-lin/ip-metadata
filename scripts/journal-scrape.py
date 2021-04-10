@@ -1,4 +1,4 @@
-#!/home/tlin/ipinfo-db-scrape/bin/python
+#!/usr/bin/python3
 import select
 import sys
 import re

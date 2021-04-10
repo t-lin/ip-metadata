@@ -8,7 +8,7 @@ def make_dir(dir_path):
         raise e
 
 class DefaultConfig(object):
-    PROJECT = "auto-scaler"
+    PROJECT = "ip-metadata"
 
     # Get app root path, also can use flask.root_path.
     # ../../config.py

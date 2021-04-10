@@ -42,6 +42,7 @@ def configure_app(app, config=None):
 
     app.config.from_object(DefaultConfig)
 
+    # Looks for file within: <project_dir>/var/<app_name>-instance/
     app.config.from_pyfile('config.py', silent=True)
 
     if config:

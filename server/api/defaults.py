@@ -42,7 +42,7 @@ class IPMetadata(Resource):
             try:
                 ipMeta = ipHandler.getDetails(ip).details
                 self.storeMetadata(ip, ipMeta)
-                ipMeta = str(ipMeta) # Convert for response
+                ipMeta = ujson.dumps(ipMeta) # Convert for response
             except Exception as err:
                 retMsg = "ERROR: Unable to get details for %s\n%s" % (ip, err)
                 return make_response(retMsg, status.HTTP_503_SERVICE_UNAVAILABLE)
