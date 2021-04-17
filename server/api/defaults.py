@@ -64,6 +64,20 @@ class IPMetadata(Resource):
 
 
 class AllIPMetadata(Resource):
+    # Uses IP metadata to craft a custom string w/ format: IP (city, region, country)
+    def createName(self, ipMeta):
+        assert type(ipMeta) is dict
+        city = ipMeta.get('city')
+        region = ipMeta.get('region')
+        country = ipMeta.get('country_name')
+
+        if city == region:
+            metaVals = [city, country]
+        else:
+            metaVals = [city, region, country]
+
+        return "%s (%s)" % (ipMeta['ip'], ', '.join(metaVals))
+
     def get(self):
         retList = []
         allMeta = [res[0].decode('utf-8') for res in etcd.get_all()]
@@ -79,7 +93,7 @@ class AllIPMetadata(Resource):
             try:
                 loc = ipMeta['loc'].split(',')
                 tmpDict = { 'key': ipMeta['ip'],
-                            'name': ipMeta['ip'],
+                            'name': self.createName(ipMeta),
                             'latitude': float(loc[0]),
                             'longitude': float(loc[1])  }
             except KeyError as err:
